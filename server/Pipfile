@@ -1,0 +1,50 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[scripts]
+test = "pipenv run ./manage.py pytest ./"
+watch = "pipenv run ./manage ptw ./"
+testci = "pipenv run ./manage.py pytest --html=report.html --self-contained-html ./"
+
+[packages]
+argon2-cffi = "*"
+asgiref = "*"
+brotli = "*"
+dj-rest-auth = "*"
+django = "*"
+django-allauth = "*"
+django-cors-headers = "*"
+django-environ = "*"
+django-filter = "*"
+django-health-check = "*"
+django-rest-knox = "*"
+django-storages = "*"
+djangorestframework = "*"
+djangorestframework-simplejwt = "*"
+drf-yasg = "*"
+Pillow = "*"
+psycopg2-binary = "*"
+pyjwt = "*"
+whitenoise = "*"
+zxcvbn = "*"
+python-memcached = "*"
+
+[dev-packages]
+codecov = "*"
+django-debug-toolbar = "*"
+factory-boy = "*"
+isort = "*"
+ptvsd = "*"
+pylint = "*"
+pympler = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-html = "*"
+pytest-sugar = "*"
+pytest-watch = "*"
+yapf = "*"
+
+[requires]
+python_version = "3.9"

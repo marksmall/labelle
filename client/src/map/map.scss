@@ -1,0 +1,30 @@
+.map {
+  width: 100%;
+  height: 60vh;
+}
+
+// .location {
+//   display: flex;
+//   z-index: 10000;
+// }
+
+// .description {
+//   width: 20rem;
+//   background-color: #fff;
+//   border: 1px solid #000;
+//   border-radius: 0.5rem;
+//   padding: 0.5rem;
+//   margin-left: 1rem;
+//   font-size: 1rem;
+// }
+
+.links {
+  display: flex;
+  flex-direction: column;
+  width: 10rem;
+  padding: 0.5rem;
+}
+
+.links > * {
+  padding: 0.5rem 0;
+}

@@ -1,0 +1,53 @@
+version: "2"
+
+services:
+  db:
+    image: kartoza/postgis:11.0-2.5
+    environment:
+      POSTGRES_USER: labelle
+      POSTGRES_PASS: labelle
+      POSTGRES_DBNAME: labelle
+      ALLOW_IP_RANGE: 0.0.0.0/0
+    ports:
+      - "5666:5432"
+    networks:
+      - labelle
+
+  server:
+    build:
+      context: .
+    tty: true
+    environment:
+      SYS_ENV: development
+      PIPENV_NOSPIN: 1
+      PIPENV_DONT_LOAD_ENV: 1
+      DJANGO_SETTINGS_MODULE: core.settings
+    volumes:
+      - ./server:/home/app/server
+      - ./client:/home/app/client
+    ports:
+      - "8000:8000"
+      - "9000:9000" # PTVSD Debugger
+    networks:
+      - labelle
+
+  client:
+    image: node:14.16.1
+    tty: true
+    environment:
+      NODE_ENV: "development"
+      REACT_APP_DOCKER: "true"
+      DOCKER_BUILDKIT: 1
+    working_dir: /home/app/client
+    volumes:
+      - ./client:/home/app/client
+    command: bash -c "yarn install && yarn build && yarn start"
+    ports:
+      - "3000:3000"
+      - "35729:35729"
+    networks:
+      - labelle
+
+networks:
+  labelle:
+    driver: bridge
