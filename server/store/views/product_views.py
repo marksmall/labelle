@@ -1,14 +1,14 @@
 """ Store views. """
 # from django.shortcuts import render
-from authentication.permissions import OnlyAdminsCanCRUD
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import DestroyAPIView, ListCreateAPIView
+# from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from store.models import Product, ProductReview
+from store.permissions import IsAuthenticated, IsOwnerOrAdmin
 from store.serializers import ProductReviewSerializer, ProductSerializer
 
 
@@ -17,20 +17,30 @@ class ProductViewSet(ModelViewSet):
     """ ViewSet to manage products. """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
-    # permission_classes = [OnlyAdminsCanCRUD]
+    permission_classes = [IsOwnerOrAdmin]
 
     @method_decorator(cache_page(60 * 60 * 24))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
 
-class ProductReviewView(CreateAPIView):
-    """ View to create product reviews. """
-    queryset = ProductReview.objects.all()
-    serializer_class = ProductReviewSerializer
+class ProductReviewMixin():
+    """ Shared get_queryset method. """
+    def get_queryset(self):
+        """ Get reviews for product id passed in. """
+        return ProductReview.objects.filter(product_id=self.kwargs["id"])
 
-    # permission_classes = [IsAuthenticated]
+
+class ProductReviewListCreateView(ProductReviewMixin, ListCreateAPIView):
+    """ View to create product reviews. """
+    serializer_class = ProductReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class ProductReviewDestroyView(ProductReviewMixin, DestroyAPIView):
+    """ View to create product reviews. """
+    serializer_class = ProductReviewSerializer
+    permission_classes = [IsOwnerOrAdmin]
 
     # def post(self, request, *args, **kwargs):
     #     """

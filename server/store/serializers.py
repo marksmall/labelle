@@ -1,4 +1,5 @@
 """ Store serializers. """
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
 from .models import Order, OrderItem, Product, ProductReview, ShippingAddress
@@ -47,6 +48,31 @@ class ProductReviewSerializer(serializers.ModelSerializer):
             'comment',
             'created_at',
         ]
+
+    def validate(self, data):
+        """ Validate the review doesn't already exist. """
+        print(f"VALIDATING DATA: {data}", flush=True)
+        print(f"REQUEST: {self.context['request'].user}", flush=True)
+        product_id = self.context['view'].kwargs['id']
+        print(f"PRODUCT ID: {product_id}", flush=True)
+        product = Product.objects.get(pk=product_id)
+        reviews = ProductReview.objects.all()
+        print(f"PRODUCT REVIEWS: {reviews[0].__dict__}", flush=True)
+        print(
+            f"REQUEST USER: {self.context['request'].user.__dict__}",
+            flush=True
+        )
+        already_exists = product.reviews_set.filter(
+            user=self.context['request'].user
+        ).exists()
+        print(f"REVIEW EXISTS: {already_exists}", flush=True)
+        # for review in reviews:
+        #     if review["name"] == data["name"]:
+        #         raise ValidationError(
+        #             f"Product review by user {review['name']} already exists"
+        #         )
+
+        return data
 
 
 class OrderSerializer(serializers.ModelSerializer):
